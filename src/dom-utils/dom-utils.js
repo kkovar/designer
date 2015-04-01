@@ -41,10 +41,17 @@ define('polymer-designer/dom-utils', function() {
         !node.hasAttribute('designer-exclude');
   }
 
+  function removeChildren(element) {
+    while (element.firstChild !== null) {
+      element.removeChild(element.firstChild);
+    }
+  }
+
   return {
     designerNodeFilter: designerNodeFilter,
     getDocumentElement: getDocumentElement,
     isDescendant: isDescendant,
+    removeChildren: removeChildren,
   };
 
 });

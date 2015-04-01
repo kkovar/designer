@@ -60,6 +60,9 @@ define('polymer-designer/commands', function() {
       };
     },
 
+    /**
+     * 
+     */
     moveElement: function(path, targetPath, position) {
       return {
         commandType: 'moveElement',
