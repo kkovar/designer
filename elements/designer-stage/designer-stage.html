@@ -90,7 +90,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * an HTML document.
      *
      * @typedef {{
-     *   path: string,
+     *   id: number,
      *   tagName: string,
      *   display: string,
      *   position: string,
@@ -123,8 +123,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value: null,
         },
 
-        hoverPath: {
-          type: String,
+        hoverNodeId: {
+          type: Number,
           value: null,
         },
 
@@ -181,7 +181,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.currentElementInfo = null;
         this.currentMousePosition = null;
         this.insertPosition = null;
-        this.hoverPath = null;
+        this.hoverNodeId = null;
         this._hideHover();
         this.$.selection.hide();
         this.mode = 'layout';
@@ -275,14 +275,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           if (insertAbove) {
             hover.classList.add('insert-above');
             this.insertPosition = commands.InsertPosition.before;
-            this.hoverPath = elementInfo.path;
+            this.hoverNodeId = elementInfo.nodeId;
           } else {
             hover.classList.remove('insert-above');
           }
           if (insertBelow) {
             hover.classList.add('insert-below');
             this.insertPosition = commands.InsertPosition.after;
-            this.hoverPath = elementInfo.path;
+            this.hoverNodeId = elementInfo.nodeId;
           } else {
             hover.classList.remove('insert-below');
           }
@@ -294,7 +294,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var hoverStyle = hover.style;
         hoverStyle.display = 'none';
         this.insertPosition = null;
-        this.hoverPath = null;
+        this.hoverNodeId = null;
       },
 
       enterTextMode() {
@@ -356,11 +356,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _onMouseUp(e) {
         this._mouseDown = false;
-        if (this.hoverPath != null && this.insertPosition != null) {
+        if (this.hoverNodeId != null && this.insertPosition != null) {
           this.fire('designer-command',
             commands.moveElement(
-              this.currentElementInfo.path,
-              this.hoverPath,
+              this.currentElementInfo.nodeId,
+              this.hoverNodeId,
               this.insertPosition));
         }
         this._hideHover();

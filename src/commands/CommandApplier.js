@@ -16,8 +16,9 @@ define('polymer-designer/commands/CommandApplier', function() {
    *
    * @abstract
    */
-  function CommandApplier(doc) {
+  function CommandApplier(doc, nodes) {
     this.doc = doc;
+    this.nodes = nodes;
   }
 
   CommandApplier.prototype = {
@@ -27,8 +28,8 @@ define('polymer-designer/commands/CommandApplier', function() {
       if (handler == null) {
         throw new Error('Unknown command type: ' + command.commandType);
       }
-      if (handler.canApply(this.doc, command)) {
-        handler.apply(this.doc, command);
+      if (handler.canApply(this.doc, this.nodes, command)) {
+        handler.apply(this.doc, this.nodes, command);
       } else {
         console.error("Can't apply command ", command);
       }

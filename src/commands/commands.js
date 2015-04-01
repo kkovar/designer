@@ -24,21 +24,23 @@ define('polymer-designer/commands', function() {
       after: 'after',
     },
 
-    setAttribute: function(path, attribute, oldValue, newValue) {
+    setAttribute: function(nodeId, attribute, oldValue, newValue) {
       return {
         commandType: 'setAttribute',
-        path: path,
+        nodeId: nodeId,
+        // path: path,
         attribute: attribute,
         oldValue: oldValue,
         newValue: newValue,
       };
     },
 
-    setTextContent: function(path, oldValue, newValue) {
+    setTextContent: function(nodeId, oldValue, newValue) {
       return {
         messageType: 'command',
         commandType: 'setTextContent',
-        path: path,
+        nodeId: nodeId,
+        // path: path,
         oldValue: oldValue,
         newValue: newValue,
       };
@@ -51,20 +53,22 @@ define('polymer-designer/commands', function() {
      *   - an element path + style attribute
      *   - a file path?
      */
-    setCssProperties: function(path, selector, properties) {
+    setCssProperties: function(nodeId, selector, properties) {
       return {
         commandType: 'setCssProperties',
-        path: path,
+        nodeId: nodeId,
+        // path: path,
         selector: selector,
         properties: properties,
       };
     },
 
-    moveElement: function(path, targetPath, position) {
+    moveElement: function(nodeId, targetId, position) {
       return {
         commandType: 'moveElement',
-        path: path,
-        targetPath: targetPath,
+        nodeId: nodeId,
+        // path: path,
+        targetId: targetId,
         position: position,
       };
     },

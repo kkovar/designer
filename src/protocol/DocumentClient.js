@@ -13,9 +13,14 @@ define('polymer-designer/protocol/DocumentClient', function() {
 
   class DocumentClient {
 
-    constructor(connection) {
+    /**
+     * @param {ClientConnection} connection
+     * @param {Map} nodes
+     */
+    constructor(connection, nodes) {
       console.assert(connection != null);
       this.connection = connection;
+      this.nodes = nodes || new Map();
     }
 
     /**
@@ -42,10 +47,10 @@ define('polymer-designer/protocol/DocumentClient', function() {
     /**
      * @returns {Promise}
      */
-    selectElementAtPath(path) {
+    selectElement(nodeId) {
       return this.connection.request({
-        messageType: 'selectElementAtPath',
-        path: path,
+        messageType: 'selectElement',
+        nodeId: nodeId,
       });
     }
 

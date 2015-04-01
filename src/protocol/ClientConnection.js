@@ -39,6 +39,7 @@ define('polymer-designer/protocol/ClientConnection',
               event.data.messageType != 'handshakeReply') {
             reject(new Error('Illegal message received during handshake'));
           }
+          console.log('handshake', event.data);
           this.target.removeEventListener('message', handshakeListener);
           this._messageHandler = this._onMessage.bind(this);
           this.target.addEventListener('message', this._messageHandler);

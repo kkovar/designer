@@ -163,16 +163,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true,
         },
 
-        currentNode: {
-          type: Object,
-          notify: true,
-          observer: '_currentNodeChanged',
-        },
+        // currentNode: {
+        //   type: Object,
+        //   notify: true,
+        //   observer: '_currentNodeChanged',
+        // },
 
         document: {
           type: Object,
           notify: true,
-          observer: '_documentChanged',
         },
 
         frame: {
@@ -200,10 +199,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true,
         },
 
+        domNodes: {
+          type: Object,
+        },
+
       },
 
       observers: {
-        'currentElementInfo.path': '_pathChanged',
+        'currentElementInfo.nodeId': '_nodeIdChanged',
       },
 
       ready() {
@@ -232,14 +235,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
-      _currentNodeChanged() {
-        if (this.document) {
-          var path = pathLib.getNodePath(this.currentNode, this.document.domDocument);
-          if (this.$.stage.currentElementInfo &&
-              this.$.stage.currentElementInfo.path !== path) {
-            this.$.stage.selectNode(path);
-          }
-        }
+      // _currentNodeChanged() {
+      //   if (this.document) {
+      //     var path = pathLib.getNodePath(this.currentNode, this.document.domDocument);
+      //     if (this.$.stage.currentElementInfo &&
+      //         this.$.stage.currentElementInfo.path !== path) {
+      //       this.$.stage.selectNode(path);
+      //     }
+      //   }
+      // },
+
+      _nodeIdChanged() {
+        console.log('nodeIdChanged');
+        // if (this.currentElementInfo != null) {
+        //   var nodeId = this.currentElementInfo.nodeId;
+        //   var node = pathLib.getNodeFromPath(path, this.domDocument);
+        //   this.currentNode = node;
+        // }
       },
 
       _onDesignerCommand(event, command) {
@@ -258,6 +270,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           demoAsset.load().then(function(content) {
             this.documentSource = content;
             this.documentUrl = demoAsset.url.href;
+
+            // TODO: this is pre-rebase onto cleanup, move to frame
+            this.domNodes = new Map();
           }.bind(this));
         }
       },

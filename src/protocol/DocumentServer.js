@@ -29,15 +29,31 @@ define('polymer-designer/protocol/DocumentServer', [
     constructor(connection) {
       this.connection = connection;
       this.currentElement = null;
-      this.commandApplier = new DomCommandApplier(document);
+      this._nextNodeId = 1;
+      this._nodesById = new Map();
+      this.commandApplier = new DomCommandApplier(document, this._nodesById);
 
       connection.on('selectElementAtPoint', this.selectElementAtPoint.bind(this));
-      connection.on('selectElementAtPath', this.selectElementAtPath.bind(this));
+      connection.on('selectElement', this.selectElement.bind(this));
       connection.on('selectionBoundsChanged', this.selectionBoundsChanged.bind(this));
       connection.on('getCaretPosition', this.getCaretPosition.bind(this));
       connection.on('moveCursor', this.moveCursor.bind(this));
       connection.on('insertText', this.insertText.bind(this));
       connection.on('command', this._onCommand.bind(this));
+    }
+
+    _getNodeId(node) {
+      let id = node.__designerNodeId__;
+      if (id == null) {
+        id = node.__designerNodeId__ = this._nextNodeId++;
+        console.log('new node id', id, node);
+        this._nodesById.set(id, node);
+      }
+      return id;
+    }
+
+    _getNodeById(id) {
+      return this._nodesById.get(id);
     }
 
     _onCommand(request) {
@@ -82,9 +98,8 @@ define('polymer-designer/protocol/DocumentServer', [
       return lastLightCandidate;
     }
 
-    selectElementAtPath(request) {
-      this.currentElement = pathLib.getNodeFromPath(request.message.path,
-          document, designerNodeFilter);
+    selectElement(request) {
+      this.currentElement = this._getNodeById(request.message.nodeId);
       this.cursorManager = new CursorManager(this.currentElement);
 
       request.reply({
@@ -142,7 +157,7 @@ define('polymer-designer/protocol/DocumentServer', [
           .getBoundingClientRect();
 
       request.reply({
-        node: pathLib.getNodePath(node),
+        nodeId: this._getNodeId(node),
         offset: offset,
         rect: {
           top: rect.top,
@@ -183,7 +198,7 @@ define('polymer-designer/protocol/DocumentServer', [
       let offset = this.cursorManager.walker.localOffset;
 
       request.reply({
-        node: pathLib.getNodePath(node),
+        nodeId: this._getNodeId(node),
         offset: offset,
         rect: {
           top: rect.top,
@@ -211,7 +226,7 @@ define('polymer-designer/protocol/DocumentServer', [
       let offset = this.cursorManager.walker.localOffset;
 
       request.reply({
-        node: pathLib.getNodePath(node),
+        node: this._getNodeId(node),
         offset: offset,
         rect: {
           top: rect.top,
@@ -233,9 +248,8 @@ define('polymer-designer/protocol/DocumentServer', [
       // TODO: Send all commands to the editor as well so that it can apply
       // them to it's document model
       var element = this.currentElement;
-      var path = pathLib.getNodePath(element, document,
-          designerNodeFilter);
-      var command = commands.setAttribute(path, 'style',
+      let nodeId = this._getNodeId(element);
+      var command = commands.setAttribute(nodeId, 'style',
         element.getAttribute('style'),
         `top: ${bounds.top}px; ` +
         `left: ${bounds.left}px; ` +
@@ -258,8 +272,9 @@ define('polymer-designer/protocol/DocumentServer', [
     _elementInfo(element) {
       var style = window.getComputedStyle(element);
       return {
-        path: pathLib.getNodePath(element, document,
-            designerNodeFilter),
+        nodeId: this._getNodeId(element),
+        // now used only for display purposes
+        path: pathLib.getNodePath(element, document, designerNodeFilter),
         tagName: element.tagName,
         display: style.display,
         position: style.position,
@@ -267,6 +282,7 @@ define('polymer-designer/protocol/DocumentServer', [
         computedStyle: cssLib.getStyleProperties(style),
       };
     }
+
   }
 
   return DocumentServer;

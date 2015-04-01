@@ -21,30 +21,30 @@ define('polymer-designer/commands/DomCommandApplier', [
 
   var commandHandlers = {
     'setAttribute': {
-      canApply: function(doc, command) {
-        var node = getNodeFromPath(command.path, doc);
+      canApply: function(doc, nodes, command) {
+        var node = nodes.get(command.nodeId);
         return node.getAttribute(command.attribute) === command.oldValue;
       },
 
-      apply: function(doc, command) {
-        var node = getNodeFromPath(command.path, doc);
+      apply: function(doc, nodes, command) {
+        var node = nodes.get(command.nodeId);
         node.setAttribute(command.attribute, command.newValue);
       },
 
-      canUndo: function(doc, command) {
-        var node = getNodeFromPath(command.path, doc);
+      canUndo: function(doc, nodes, command) {
+        var node = nodes.get(command.nodeId);
         return node.getAttribute(command.attribute) === command.newValue;
       },
 
-      undo: function(doc, command) {
-        var node = getNodeFromPath(command.path, doc);
+      undo: function(doc, nodes, command) {
+        var node = nodes.get(command.nodeId);
         node.setAttribute(command.attribute, command.oldValue);
       },
     },
 
     'setTextContent': {
-      canApply: function(doc, command) {
-        var node = getNodeFromPath(command.path, doc);
+      canApply: function(doc, nodes, command) {
+        var node = nodes.get(command.nodeId);
         if (!node) return false;
         var hasElementChildren = node.children === 0;
         if (hasElementChildren) {
@@ -55,34 +55,34 @@ define('polymer-designer/commands/DomCommandApplier', [
         return !hasElementChildren;
       },
 
-      apply: function(doc, command) {
-        var node = getNodeFromPath(command.path, doc);
+      apply: function(doc, nodes, command) {
+        var node = nodes.get(command.nodeId);
         node.textContent = command.newValue;
       },
 
-      canUndo: function(doc, command) {
-        var node = getNodeFromPath(command.path, doc);
+      canUndo: function(doc, nodes, command) {
+        var node = nodes.get(command.nodeId);
         return node.textContent === command.newValue;
       },
 
-      undo: function(doc, command) {
-        var node = getNodeFromPath(command.path, doc);
+      undo: function(doc, nodes, command) {
+        var node = nodes.get(command.nodeId);
         node.textContent = command.oldValue;
       },
     },
 
     'moveElement': {
-      canApply: function(doc, command) {
-        var el = pathLib.getNodeFromPath(command.path, doc);
-        var target = pathLib.getNodeFromPath(command.targetPath, doc);
+      canApply: function(doc, nodes, command) {
+        var el = nodes.get(command.nodeId);
+        var target = nodes.get(command.targetNodeId);
         return el != null && target != null &&
             (command.position == commands.InsertPosition.before ||
              command.position == commands.InsertPosition.after);
       },
 
-      apply: function(doc, command) {
-        var el = pathLib.getNodeFromPath(command.path, doc);
-        var target = pathLib.getNodeFromPath(command.targetPath, doc);
+      apply: function(doc, nodes, command) {
+        var el = nodes.get(command.nodeId);
+        var target = nodes.get(command.targetNodeId);
         var container = target.parentNode;
         if (command.position == commands.InsertPosition.before) {
           container.insertBefore(el, target);
@@ -92,7 +92,7 @@ define('polymer-designer/commands/DomCommandApplier', [
         }
       },
 
-      canUndo: function(doc, command) {
+      canUndo: function(doc, nodes, command) {
         return false;
       },
     },
@@ -102,8 +102,8 @@ define('polymer-designer/commands/DomCommandApplier', [
    * Applies commands to DOM Documents, including embedded and linked
    * stylesheets.
    */
-  function DomCommandApplier(doc) {
-    CommandApplier.call(this, doc);
+  function DomCommandApplier(doc, nodes) {
+    CommandApplier.call(this, doc, nodes);
     this.handlers = commandHandlers;
   }
   DomCommandApplier.prototype = Object.create(CommandApplier.prototype);
