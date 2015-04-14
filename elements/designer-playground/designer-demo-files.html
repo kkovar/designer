@@ -34,7 +34,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
 
     ready() {
-      fetch('/files').then(function(response) {
+      fetch('/files/ls').then(function(response) {
         let lightDom = Polymer.dom(this);
 
         // Remove current children
@@ -44,7 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         let rootElement = document.createElement('designer-directory-data');
         rootElement.name = 'files';
-        rootElement.path = 'files';
+        rootElement.path = 'files/ls';
         rootElement.isDirectory = true;
         rootElement.isFile = false;
         rootElement.fileSystem = this;
@@ -61,6 +61,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
 
     loadDirectory(path) {
+      console.log('loadDirectory', path);
       return fetch(path).then(function(response) {
         return response.json();
       })

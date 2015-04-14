@@ -17,7 +17,7 @@ var send = require('send');
 var bowerComponentDir = 'bower_components';
 var componentHeaders = {
   'Access-Control-Allow-Origin': '*'
-}
+};
 var app = express();
 
 // dynamically build frame.js for edit-refresh goodness

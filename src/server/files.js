@@ -13,15 +13,38 @@ var fs = require('fs');
 var http = require('http');
 var path = require('path');
 var parseUrl = require('url').parse;
+var polyserve = require('polyserve');
 var send = require('send');
 
 var app = express();
 
-app.get('*', function(req, res, next) {
+var demoDir = path.join(__dirname, '../../demo');
+var bowerComponentDir = path.join(demoDir, '/bower_components');
+
+app.use(function(req, res, next) {
+  console.log('files.js', req.path);
+  next();
+});
+
+var componentHeaders = {
+  'Access-Control-Allow-Origin': '*'
+};
+
+app.use('/components', polyserve.makeApp(
+    bowerComponentDir,
+    'polymer-designer-demos',
+    componentHeaders,
+    demoDir));
+
+app.get('/ls*', function(req, res, next) {
+
 
   var url = parseUrl(req.path);
-  var dir = decodeURIComponent(url.pathname);
-  var filePath = path.normalize(path.join(__dirname, '../../demo', dir));
+  var dir = decodeURIComponent(url.pathname).split('/').slice(2);
+  var filePath = path.normalize(path.join.apply(null,
+      [__dirname, '../../demo'].concat(dir)));
+
+  console.log('files.js listing *', req.path, filePath);
 
   fs.stat(filePath, function(err, stat) {
     if (err) {
@@ -33,7 +56,7 @@ app.get('*', function(req, res, next) {
     }
 
     res.append('Access-Control-Allow-Origin', '*');
-    
+
     if (stat.isDirectory()) {
       fs.readdir(filePath, function(err, files) {
         if (err) {

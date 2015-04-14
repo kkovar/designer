@@ -127,6 +127,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               this._parsedCommandApplier =
                   new ParsedHtmlCommandApplier(this.ast);
           }.bind(this));
+          // this.domDocument = createDocument(content, frameScript, url);
+          // this.ast = parsedDocument.ast;
 
         }.bind(this));
       },
@@ -182,6 +184,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * with `href` set to [baseUri] are injected into the document's `<head>`.
      */
     function createDocument(content, frameScript, baseUri) {
+      console.log('createDocument', baseUri);
       let doc = document.implementation.createHTMLDocument();
       doc.documentElement.innerHTML = content;
 

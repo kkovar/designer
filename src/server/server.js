@@ -18,6 +18,12 @@ function startServer() {
   // TODO: allow port to be set with flag, fallback to other ports
   var port = 8080;
 
+  // app.use(function(req, res, next) {
+  //   console.log('server.js', req.path);
+  //   next();
+  // });
+  //
+
   app.get('/', function(req, res) {
     send(req, path.join(__dirname, 'index.html')).pipe(res);
   });
