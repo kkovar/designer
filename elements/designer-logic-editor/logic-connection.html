@@ -79,9 +79,9 @@ define(function() {
       viewbox: String,
     },
 
-    observers: {
-      'editor fromPatchRef fromPort toPatchRef toPort': '_update',
-    },
+    observers: [
+      '_update(editor,fromPatchRef,fromPort,toPatchRef,toPort)',
+    ],
 
     render() {
       this.fromPatch = this.editor.getPatch(this.fromPatchRef);

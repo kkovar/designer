@@ -122,9 +122,9 @@ define(function() {
       'mousedown': '_onMouseDown'
     },
 
-    observers: {
-      'editor nodeRef': '_nodeRefChanged',
-    },
+    observers: [
+      '_nodeRefChanged(editor,nodeRef)',
+    ],
 
     created() {
       // console.log('created');
